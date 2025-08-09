@@ -4,6 +4,33 @@ import openpyxl as opx
 from tkinter import filedialog, messagebox
 import datetime
 
+class App(ctk.CTkToplevel):
+    def __init__(self):
+        super().__init__()
+        self.title("設定")
+        self.geometry("400x300")
+
+        
+
+        self.price_file_frame=ctk.CTkFrame(master=self)
+        self.price_file_frame.pack(pady=10)
+        self.price_file_button=ctk.CTkButton(
+            master=self.price_file_frame,
+            text="単価表ファイルを選択",
+            
+        )
+
+    def select_file(self, file_type):
+        file_path = filedialog.askopenfilename(filetypes=[("Excelファイル", "*.xlsx")])
+        if file_path:
+            if file_type == "price":
+                self.PRICE_FILE_PATH = file_path
+            elif file_type == "stock":
+                self.STOCK_FILE_PATH = file_path
+            elif file_type == "sales":
+                self.SALES_FILE_PATH = file_path
+
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -11,6 +38,14 @@ class App(ctk.CTk):
         self.PRICE_FILE_PATH="フロンガス単価表2025.xlsx"
         self.STOCK_FILE_PATH="2025在庫.xlsx"
         self.SALES_FILE_PATH="R706 得意先別売上分析表.xlsx"
+
+        self.file_frame=ctk.CTkFrame(master=self)
+        self.file_frame.pack(padx=10, fill="x")
+
+        self.price_file_button=ctk.CTkButton(
+            master=self.file_frame,
+            text="単価表"
+        )
 
         self.id_row_in_price=3
         self.price_row_in_price=25
@@ -171,8 +206,8 @@ class App(ctk.CTk):
             id=sales_sheet.cell(row=row, column=self.id_column_in_sales).value
             price=id_price_dict.get(id, None)
             if price:
-                sales=int(sales_sheet.cell(row=row, column=self.sales_column_in_sales).value)
-                sales_num=int(sales_sheet.cell(row=row, column=self.sales_num_column_in_sales).value)
+                sales=float(sales_sheet.cell(row=row, column=self.sales_column_in_sales).value)
+                sales_num=float(sales_sheet.cell(row=row, column=self.sales_num_column_in_sales).value)
                 if sales and sales_num:
                     profit=sales-sales_num * price
                     profit_rate=sales/profit

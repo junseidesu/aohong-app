@@ -1,0 +1,19 @@
+{
+    "file":{
+        "price_file_path": "フロンガス単価表2025.xlsx",
+        "stock_file_path": "2025在庫.xlsx",
+        "sales_file_path": "R706 得意先別売上分析表.xlsx"
+    },
+    "position": {
+        "id_row_in_price": 3,
+        "price_row_in_price": 25,
+        "id_column_in_stock": 3,
+        "price_column_in_stock": 10,
+        "data_start_row_in_stock": 7,
+        "id_column_in_sales": 4,
+        "profit_column_in_sales": 9,
+        "profit_rate_column_in_sales": 10,
+        "sales_column_in_sales": 6,
+        "sales_num_column_in_sales": 8
+    }
+}
