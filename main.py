@@ -29,11 +29,11 @@ class Settings:
         "APP_NAME": "在庫単価転記アプリ",
         # 横幅を少し狭める（以前:400）
         "WINDOW_WIDTH": 340,
-    # 高さもコンパクトに（以前:300）
-    "WINDOW_HEIGHT": 240,
-        "THEME": "dark",
-        "COLOR_THEME": "blue",
-        "ICON_FILE": "reclaim_icon.ico"
+        # 高さもコンパクトに（以前:300）
+        "WINDOW_HEIGHT": 240,
+        "THEME": "light",
+        "COLOR_THEME": "dark-blue",
+        "ICON_FILE": "icon.ico"
     }
     
     @classmethod
@@ -144,11 +144,11 @@ class SettingsWindow(ctk.CTkToplevel):
         except Exception:
             pass
         # スクロール可能領域（全体コンテンツ）
-        self.scroll = ctk.CTkScrollableFrame(self, label_text="設定")
+        self.scroll = ctk.CTkScrollableFrame(self, label_text="設定", fg_color=("#E0E0E0", "#1a1a1a"))
         self.scroll.pack(fill="both", expand=True, padx=10, pady=10)
 
         # ファイル設定セクション
-        file_section = ctk.CTkFrame(self.scroll)
+        file_section = ctk.CTkFrame(self.scroll, fg_color=("#D0D0D0", "#0f0f0f"))
         file_section.pack(fill="x", pady=(0,10))
         ctk.CTkLabel(file_section, text="ファイル設定", font=("Arial", 14, "bold")).grid(row=0, column=0, columnspan=6, sticky="w", pady=(4,4))
 
@@ -173,7 +173,7 @@ class SettingsWindow(ctk.CTkToplevel):
             file_section.grid_columnconfigure(c, weight= (1 if c in (1,2) else 0))
 
         # 行・列設定編集フレーム
-        self.position_frame = ctk.CTkFrame(self.scroll)
+        self.position_frame = ctk.CTkFrame(self.scroll, fg_color=("#D0D0D0", "#0f0f0f"))
         self.position_frame.pack(pady=5, padx=0, fill="x")
         ctk.CTkLabel(self.position_frame, text="行・列設定", font=("Arial", 14, "bold")).grid(row=0, column=0, columnspan=4, pady=(4,4), sticky="w")
 
@@ -204,7 +204,7 @@ class SettingsWindow(ctk.CTkToplevel):
         self.position_frame.grid_columnconfigure(0, weight=1)
 
         # 現在の設定表示
-        self.info_frame = ctk.CTkFrame(master=self.scroll)
+        self.info_frame = ctk.CTkFrame(master=self.scroll, fg_color=("#D0D0D0", "#0f0f0f"))
         self.info_frame.pack(pady=8, padx=0, fill="x")
 
         ctk.CTkLabel(self.info_frame, text="現在の設定", font=("Arial", 14, "bold")).pack(pady=5)
@@ -260,7 +260,7 @@ class SettingsWindow(ctk.CTkToplevel):
         if file_path:
             self.file_vars[file_type].set(file_path)
             self.update_file_labels()
-            self.auto_fit_size(only_expand=True)
+            self.auto_fit_size(only_expand=False)
 
     def open_in_explorer(self, key):
         path = self.file_vars[key].get().strip()
@@ -402,20 +402,20 @@ class App(ctk.CTk):
             pass
 
         # 上部: 設定ボタン
-        self.file_frame = ctk.CTkFrame(self)
+        self.file_frame = ctk.CTkFrame(self, fg_color=("#E0E0E0", "#1a1a1a"))
         self.file_frame.pack(padx=8, pady=2, fill="x")
         self.settings_button = ctk.CTkButton(self.file_frame, text="設定", width=70, command=self.open_settings)
         self.settings_button.pack(pady=2)
 
         # メインフレーム
-        self.frame = ctk.CTkFrame(self)
+        self.frame = ctk.CTkFrame(self, fg_color=("#E0E0E0", "#1a1a1a"))
         self.frame.pack(pady=6, padx=10, fill="both", expand=True)
 
         # 年月選択
         now = datetime.datetime.now()
         self.year_var = ctk.StringVar(value=f"{now.year}年")
         self.month_var = ctk.StringVar(value=f"{now.month}月")
-        self.year_month_menu_frame = ctk.CTkFrame(self.frame)
+        self.year_month_menu_frame = ctk.CTkFrame(self.frame, fg_color=("#D0D0D0", "#0f0f0f"))
         self.year_month_menu_frame.pack(pady=2, fill="x")
         current_year = now.year
         year_options = [f"{i}年" for i in range(current_year-1, current_year+2)]
@@ -431,9 +431,9 @@ class App(ctk.CTk):
 
         # 操作ボタン
         self.button_1 = ctk.CTkButton(self.frame, text="在庫単価を在庫表に転記", command=self.update_stock_list, width=200)
-        self.button_1.pack(pady=(2,2))
+        self.button_1.pack(pady=(16,8))
         self.button_2 = ctk.CTkButton(self.frame, text="在庫単価を売上表に転記", command=self.update_sales_list, width=200)
-        self.button_2.pack(pady=(0,4))
+        self.button_2.pack(pady=(8,16))
 
         # 進行状況バー & ステータス
         self.progress = ctk.CTkProgressBar(self.frame)
@@ -533,7 +533,7 @@ class App(ctk.CTk):
             price_sheet = price_list["一般総平均"]
         except KeyError:
             messagebox.showerror("エラー", "一般総平均シートが見つかりません")
-            return
+            return self._end_long_task()
         
         selected_year, selected_month = self.get_selected_year_month()
         selected_year_int = int(selected_year[:-1])
@@ -545,7 +545,7 @@ class App(ctk.CTk):
         
         if not month_cell:
             messagebox.showerror("エラー", f"{converted_year_month}のセルが見つかりません")
-            return
+            return self._end_long_task()
         
         id_price_dict = {}
         next_month_col = None
@@ -578,7 +578,7 @@ class App(ctk.CTk):
         
         if not stock_sheet:
             messagebox.showerror("エラー", f"{converted_year_month}の在庫シートが見つかりません")
-            return
+            return self._end_long_task()
 
         fix_point_count = 0
         for row_num in range(1, stock_sheet.max_row+1):
@@ -633,7 +633,7 @@ class App(ctk.CTk):
         
         if not stock_sheet:
             messagebox.showerror("エラー", f"{converted_year_month}の在庫シートが見つかりません")
-            return
+            return self._end_long_task()
 
         sales_sheet = sales_list.active
 
