@@ -1,12 +1,12 @@
 {
   "files": {
-    "price_file_path": "C:/Users/junko/Desktop/aohongアプリ/フロンガス単価表2025.xlsx",
-    "stock_file_path": "C:/Users/junko/Desktop/aohongアプリ/2025在庫.xlsx",
+    "price_file_path": "C:/Users/junko/Downloads/フロンガス単価表2025.xlsx",
+    "stock_file_path": "C:/Users/junko/Downloads/2025在庫.xlsx",
     "sales_file_path": "R706 得意先別売上分析表.xlsx"
   },
   "positions": {
     "id_row_in_price": 3,
-    "price_row_in_price": 25,
+    "price_row_in_price": 28,
     "id_column_in_stock": 3,
     "price_column_in_stock": 10,
     "data_start_row_in_stock": 7,

@@ -521,7 +521,7 @@ class App(ctk.CTk):
         # Settings から直接ファイルパスを取得
         try:
             price_list = opx.load_workbook(Settings.PRICE_FILE_PATH, data_only=True)
-            stock_list = opx.load_workbook(Settings.STOCK_FILE_PATH, data_only=True)
+            stock_list = opx.load_workbook(Settings.STOCK_FILE_PATH, data_only=False)
         except FileNotFoundError as e:
             messagebox.showerror("エラー", f"ファイルが見つかりません: {e}")
             return self._end_long_task()
@@ -565,7 +565,7 @@ class App(ctk.CTk):
         for i in range(month_cell.column, next_month_col):
             id_cell = price_sheet.cell(row=Settings.ID_ROW_IN_PRICE, column=i)
             price_cell = price_sheet.cell(row=Settings.PRICE_ROW_IN_PRICE, column=i)
-            if id_cell.value and price_cell.value:
+            if id_cell.value and price_cell.value and price_cell.value!=0:
                 id_price_dict[id_cell.value] = price_cell.value
                 
         # 在庫表に転記
